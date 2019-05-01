@@ -8,4 +8,7 @@ router.get('/', (request, response) => {
    });
 });
 
+router.use( require('./users.routes') );
+
+
 module.exports = router;
