@@ -38,7 +38,7 @@ userSchema.methods.setPassword = (password) => {
     this.salt = crypto.randomBytes(16).toString('hex');
     this.hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
 };
-userSchema.methods.generateJWT = () => {
+userSchema.methods.generateJWT = function() {
     var today = new Date();
     var exp = new Date(today);
     exp.setDate(today.getDate() + 60);
@@ -46,18 +46,18 @@ userSchema.methods.generateJWT = () => {
     return jwt.sign({
         id: this._id,
         username: this.username,
-        exp: parseInt(exp.getTime() / 1000)
+        exp: parseInt(exp.getTime() / 1000),
     }, secret);
 };
-userSchema.methods.toAuthJSON = () => {
+userSchema.methods.toAuthJSON = function() {
     return {
         username: this.username,
         email: this.email,
         token: this.generateJWT(),
         bio: this.bio,
-        imagen: this.image
-    }
-}
+        image: this.image
+    };
+};
 
 var Users = module.exports = mongoose.model('users', userSchema);
 module.exports.get = (callback, limit) => {

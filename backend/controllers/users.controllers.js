@@ -59,3 +59,82 @@ exports.new = (request, response) => {
       })
 
 };
+
+exports.view = (request, response) => {
+    User.findById(request.params.id)
+        .exec()
+        .then(user => {
+            if (user) {
+                response.json({
+                    status: 200,
+                    user: user.toAuthJSON()
+                });
+            } else {
+                response.json({
+                    status: 500,
+                    message: "ID is not valid"
+                });
+            }
+        })
+        .catch( err => {
+            response.json({
+                status: 404,
+                message: 'USER NOT FOUND',
+                error: err
+            })
+        });
+};
+
+exports.update = (request, response) => {
+    User.findById(request.params.id)
+        .then(user => {
+            if (!user) return response.sendStatus(401);
+
+            if (typeof request.body.username !== 'undefined') { user.username = request.body.username; }
+            if (typeof request.body.email !== 'undefined') { user.email = request.body.email; }
+            if (typeof request.body.bio !== 'undefined') { user.bio = request.body.bio; }
+            if (typeof request.body.image !== 'undefined') { user.image = request.body.image; }
+            if (typeof request.body.password !== 'undefined') { user.setPassword(request.body.password); }
+
+            return user.save().then(() =>{
+                response.json({
+                    status: 200,
+                    message: 'User updated',
+                    user: user.toAuthJSON()
+                })
+            });
+        })
+        .catch( err => {
+            response.json({
+                status: 404,
+                message: 'USER NOT FOUND',
+                error: err
+            })
+        });
+};
+
+exports.delete = (request, response) => {
+    User.findById(request.params.id)
+        .then(user => {
+            if (!user) return response.sendStatus(401);
+            user.remove(err => {
+                if (err) {
+                    response.json({
+                        status: 500,
+                        message: err
+                    })
+                }
+                response.json({
+                    status: 200,
+                    message: 'User deleted'
+                })
+            })
+        })
+        .catch( err => {
+            response.json({
+                status: 404,
+                message: 'USER NOT FOUND',
+                error: err
+            })
+        });
+};
