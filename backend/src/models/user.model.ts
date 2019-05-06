@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import { IUser } from '../interfaces/IUsers';
+import crypto from 'crypto';
 
 const schema = new mongoose.Schema({
     username: {
@@ -21,8 +22,8 @@ const schema = new mongoose.Schema({
     },
     image:{ type: String },
     bio:  { type: String },
-    hash: { type: String },
-    salt: { type: String }
+    hash: { type: String, select: false },
+    salt: { type: String, select: false }
 }, { timestamps: true });
 schema.plugin(uniqueValidator, {message: 'is already taken.'});
 
